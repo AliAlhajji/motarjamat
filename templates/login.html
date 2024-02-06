@@ -1,0 +1,41 @@
+{{ template "header" .}}
+{{ template "navbar" .}}
+<div class="container-sm">
+    <form id="loginForm" method="GET">
+        {{ if .err }}
+        <div class="alert alert-danger" id="loginError" role="alert" hidden>
+            {{ .err }}
+        </div>
+        {{ end }}
+        <div class="alert alert-danger" id="loginError" role="alert" hidden>
+            المعلومات المدخلة غير صحيحة
+        </div>
+        <div class="mb-3">
+            <label for="exampleInputEmail1" class="form-label">البريد الإلكتروني</label>
+            <input type="email" class="form-control" id="email" aria-describedby="">
+        </div>
+        <div class="mb-3">
+            <label for="exampleInputPassword1" class="form-label">كلمة المرور</label>
+            <input type="password" class="form-control" id="password">
+        </div>
+        <div id="createAccount" class="form-text">
+            <a href="/register">إنشاء حساب جديد</a>
+        </div>
+        <button type="submit" id="submit" class="btn btn-primary" onclick="signIn()">الدخول</button>
+    </form>
+</div>
+{{ template "footer" .}}
+<script type="module">
+    import { signIn } from "/assets/js/auth.js";
+    window.signIn = signIn;
+</script>
+
+<script>
+    var form = document.getElementById("loginForm")
+    document.getElementById("loginForm").addEventListener("submit", (event) => {
+        event.preventDefault()
+
+        signIn()
+
+    })
+</script>

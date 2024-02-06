@@ -1,0 +1,74 @@
+{{ template "header" .}}
+{{ template "navbar" .}}
+
+{{ if .user }}
+<div class="alert alert-info" id="info" role="alert">
+    تم إنشاء المستخدم {{ .user.Username }}
+</div>
+{{ else }}
+<div class="alert alert-danger" id="errorMsg" role="alert" hidden>
+
+</div>
+{{ if .err }}
+<div class="alert alert-danger" id="errorMsg" role="alert">
+    {{ .err }}
+</div>
+{{ end }}
+<center>
+    <p>
+    <h1>إنشاء حساب جديد</h1>
+
+    </p>
+
+</center>
+<div class="container-sm">
+
+    <form action="" method="post" id="form">
+        <div class="mb-3 row">
+            <label for="email" class="col-sm-2 col-form-label">البريد الإلكتروني</label>
+            <div class="col-sm-3">
+                <input type="email" name="email" id="email" class="form-control" placeholder="user@example.com">
+            </div>
+
+
+        </div>
+        <div class="mb-3 row">
+            <label for="passwoord" class="col-sm-2 col-form-label">الرقم السري</label>
+            <div class="col-sm-3">
+                <input type="password" name="password" id="password" class="form-control" placeholder="Strong Pa$$word">
+            </div>
+
+        </div>
+        <div class="mb-3 row">
+            <label for="username" class="col-sm-2 col-form-label">اسم المستخدم</label>
+            <div class="col-sm-3">
+                <input type="text" name="username" id="username" class="form-control" placeholder="example">
+            </div>
+
+        </div>
+        <div class="mb-3 row">
+            <label for="name" class="col-sm-2 col-form-label">اسم العرض</label>
+            <div class="col-sm-3">
+                <input type="text" name="name" id="name" class="form-control" placeholder="مثال المثالي">
+            </div>
+
+        </div>
+
+        <button type="submit" class="btn btn-primary mb-3">إنشاء الحساب</button>
+    </form>
+</div>
+
+{{ template "footer" .}}
+
+<script type="module">
+    import { register } from "/assets/js/auth.js";
+    window.register = register
+</script>
+
+<script>
+    document.getElementById("form").addEventListener("submit", (e) => {
+        e.preventDefault()
+        register()
+    })
+</script>
+{{ end }}

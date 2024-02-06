@@ -1,0 +1,52 @@
+{{ template "header" .}}
+{{ template "navbar" .}}
+
+<style>
+    .post-body {
+        width: 50%;
+        max-width: 768px;
+        /* Optional breakpoint for wider screens */
+        margin: 0 auto;
+        /* Centers on desktop */
+
+        /* Mobile styles (media query) */
+        @media only screen and (max-width: 767px) {
+            width: 95%;
+            /* Fills entire width on mobile */
+            margin: 0;
+            /* Remove desktop centering */
+        }
+    }
+</style>
+
+<center>
+    <br>
+    <h1>{{ .post.Title }}</h1>
+    <h5>ترجمة: {{ .post.Name }}</h5>
+    {{ if eq .user.UUID .post.UserID }}
+    [ <a href="/edit_post/{{ .post.ID }}">تعديل</a> ] [ <a href="/delete_post/{{ .post.ID }}">حذف نهائي</a> ]
+    {{ end }}
+    <hr>
+    <br>
+    <p>
+    <div id="content" class="post-body">
+        {{ .post.Body }}
+    </div>
+    </p>
+
+    <p>
+    <div>
+        <br>
+        الرابط الأصلي للمقال:
+        <a href="{{ .post.Link }}">{{ .post.Link }}</a>
+    </div>
+</center>
+
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<script>
+    document.getElementById('content').innerHTML =
+        marked.parse('{{ .post.Body }}');
+</script>
+</p>
+
+{{ template "footer" .}}

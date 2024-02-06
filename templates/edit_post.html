@@ -1,0 +1,48 @@
+{{ template "header" .}}
+
+{{ template "navbar" .}}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/simplemde-rtl@latest/dist/simplemde-rtl.min.css">
+<script src="https://cdn.jsdelivr.net/npm/simplemde-rtl@latest/dist/simplemde-rtl.min.js"></script>
+
+{{ if .err }}
+<div class="alert alert-danger" id="loginError" role="alert">
+    {{ .err }}
+</div>
+{{ end }}
+
+<div class="container mt-5">
+    <h2>تعديل مترجمة: {{ .post.Title }}</h2>
+    <form id="form" method="post">
+        <div class="mb-3">
+            <label for="title" class="form-label">العنوان</label>
+            <input type="text" class="form-control" id="title" name="title" value="{{ .post.Title }}">
+        </div>
+        <div class="mb-3">
+            <label for="body" class="form-label">المحتوى</label>
+            <textarea class="form-control" id="body" name="body" rows="5"></textarea>
+        </div>
+        <div class="mb-3">
+            <label for="link" class="form-label">رابط الأصل</label>
+            <input type="url" class="form-control" id="link" name="link" value="{{ .post.Link }}">
+        </div>
+        <button type="submit" class="btn btn-primary">نشر</button>
+    </form>
+</div>
+
+<script>
+    var simplemde = new SimpleMDE({ element: document.getElementById("body") });
+    simplemde.value("{{ .post.Body }}")
+
+    const form = document.getElementById("form")
+
+    form.addEventListener("submit", (event) => {
+        event.preventDefault()
+        document.getElementById("body").value = simplemde.value();
+
+        form.submit()
+    })
+
+
+</script>
+
+{{ template "footer" .}}

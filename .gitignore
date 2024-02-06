@@ -1,0 +1,4 @@
+data.db
+*.exe
+firebase-sdk.json
+.vscode
