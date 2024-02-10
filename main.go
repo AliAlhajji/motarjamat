@@ -84,7 +84,7 @@ func main() {
 	r.GET("/:page", postControllrt.AllPostsByPage)
 	r.GET("/new_post", authMiddleware.Authenticate(), postControllrt.NewPost)
 	r.POST("/new_post", authMiddleware.Authenticate(), postControllrt.NewPost)
-	r.Any("/post/:post", postControllrt.GetPost)
+	r.Any("/post/:postID", postControllrt.GetPost)
 	r.GET("/edit_post/:postID", authMiddleware.Authenticate(), postControllrt.EditPost)
 	r.POST("/edit_post/:postID", authMiddleware.Authenticate(), postControllrt.EditPost)
 	r.GET("/delete_post/:postID", authMiddleware.Authenticate(), postControllrt.Delete)
