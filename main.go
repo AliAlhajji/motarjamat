@@ -85,9 +85,9 @@ func main() {
 	r.GET("/new_post", authMiddleware.Authenticate(), postControllrt.NewPost)
 	r.POST("/new_post", authMiddleware.Authenticate(), postControllrt.NewPost)
 	r.Any("/post/:post", postControllrt.GetPost)
-	r.GET("/edit_post/:id", authMiddleware.Authenticate(), postControllrt.EditPost)
-	r.POST("/edit_post/:id", authMiddleware.Authenticate(), postControllrt.EditPost)
-	r.GET("/delete_post/:id", authMiddleware.Authenticate(), postControllrt.Delete)
+	r.GET("/edit_post/:postID", authMiddleware.Authenticate(), postControllrt.EditPost)
+	r.POST("/edit_post/:postID", authMiddleware.Authenticate(), postControllrt.EditPost)
+	r.GET("/delete_post/:postID", authMiddleware.Authenticate(), postControllrt.Delete)
 	r.GET("/category/:category", postControllrt.CategoryPosts)
 
 	err = r.Run()

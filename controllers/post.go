@@ -92,7 +92,7 @@ func (c *postsController) NewPost(ctx *gin.Context) {
 }
 
 func (c *postsController) GetPost(ctx *gin.Context) {
-	postID := ctx.Param("post")
+	postID := ctx.Param("postID")
 
 	id, err := strconv.Atoi(postID)
 	if err != nil {
@@ -176,7 +176,7 @@ func (c *postsController) CategoryPosts(ctx *gin.Context) {
 }
 
 func (c *postsController) EditPost(ctx *gin.Context) {
-	paramPostID := ctx.Param("post")
+	paramPostID := ctx.Param("postID")
 
 	postID, err := strconv.Atoi(paramPostID)
 	if err != nil {
@@ -225,7 +225,7 @@ func (c *postsController) EditPost(ctx *gin.Context) {
 }
 
 func (c *postsController) Delete(ctx *gin.Context) {
-	paramPostID := ctx.Param("id")
+	paramPostID := ctx.Param("postID")
 
 	postID, err := strconv.Atoi(paramPostID)
 	if err != nil {
