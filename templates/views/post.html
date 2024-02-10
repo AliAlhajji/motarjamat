@@ -23,9 +23,13 @@
     <br>
     <h1>{{ .post.Title }}</h1>
     <h5>ترجمة: {{ .post.Name }}</h5>
-    {{ if eq .user.UUID .post.UserID }}
-    [ <a href="/edit_post/{{ .post.ID }}">تعديل</a> ] [ <a href="/delete_post/{{ .post.ID }}">حذف نهائي</a> ]
+
+    {{ if and (.user) (eq .user.UUID .post.UserID) }}
+    [ <a href="/edit_post/{{ .post.ID }}">تعديل</a> ]
+    [ <a onclick="return confirm('هل أنت متأكد من حذف هذه المترجمة؟ هذا االحذف سيكون نهائيًا')"
+        href="/delete_post/{{ .post.ID }}">حذف نهائي</a> ]
     {{ end }}
+
     <hr>
     <br>
     <p>

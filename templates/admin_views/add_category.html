@@ -1,0 +1,12 @@
+{{ template "admin_header" .}}
+{{ template "admin_navbar" .}}
+{{ template "admin_messages" .}}
+
+<form action="" method="post">
+    <label for="title">
+        <input type="text" name="title" id="title" placeholder="اسم التصنيف">
+    </label>
+    <button type="submit">حفظ</button>
+</form>
+
+{{ template "admin_footer" .}}

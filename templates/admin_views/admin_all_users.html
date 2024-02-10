@@ -1,0 +1,82 @@
+{{ template "admin_header" .}}
+{{ template "admin_navbar" .}}
+{{ template "admin_messages" .}}
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th scope="col">المعرّف</th>
+            <th scope="col">اسم المستخدم</th>
+            <th scope="col">الاسم</th>
+            <th scope="col">البريد</th>
+            <th scope="col">تاريخ التسجيل</th>
+            <th scope="col">التحكم</th>
+        </tr>
+    </thead>
+    <tbody>
+        {{ range .users }}
+        <tr>
+            <td>
+                {{ .ID }}
+            </td>
+            <td>
+                {{ .Username }}
+            </td>
+            <td>
+                {{ .Name }}
+            </td>
+            <td>
+                {{ .Email }}
+            </td>
+            <td>
+                {{ .JoinDate.Format "2006-01-02" }}
+            </td>
+            <td>
+                <button type="button" class="btn btn-danger"
+                    onclick="showDeleteModal('{{ .ID }}', '{{ .Username }}')">حذف</button>
+            </td>
+        </tr>
+        {{ end }}
+    </tbody>
+</table>
+
+<div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-labelledby="confirmDeleteModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="confirmDeleteModalLabel">اكتب اسم المستخدم كما هو لتأكيد الحذف</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <input type="text" class="form-control" id="usernameInput" placeholder="Enter your data here">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">تراجع</button>
+                <button type="button" id="confirmButton" class="btn btn-primary">تأكيد</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function showDeleteModal(userID, username) {
+
+
+        const modal = new bootstrap.Modal(document.getElementById("confirmDeleteModal"))
+        const confirmButton = document.getElementById("confirmButton")
+        confirmButton.onclick = (event) => {
+            const currentUsername = document.getElementById('usernameInput').value;
+
+            if (currentUsername == username) {
+                window.location = "/admin/user/delete/" + userID
+            } else {
+                modal.toggle();
+            }
+        }
+
+        modal.toggle();
+
+    }
+</script>
+{{ template "admin_footer" .}}

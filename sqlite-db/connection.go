@@ -43,7 +43,7 @@ var createTables map[string]string = map[string]string{
 	id INTEGER NOT NULL PRIMARY KEY,
 	uuid TEXT,
 	username TEXT,
-	password TEXT,
+	password TEXT DEFAULT "",
 	email TEXT,
 	name TEXT,
 	join_date DATE,
@@ -62,6 +62,22 @@ var createTables map[string]string = map[string]string{
 				date DATE,
 				FOREIGN KEY (user_id) REFERENCES user(id)
 			);
+	`,
+
+	"categories": `
+	CREATE TABLE IF NOT EXISTS category(
+		id INTEGER NOT NULL PRIMARY KEY,
+		title TEXT
+		);
+		`,
+
+	"post_category": `
+		CREATE TABLE IF NOT EXISTS post_category(
+			post_id INTEGER,
+			category_id INTEGET,
+			FOREIGN KEY (post_id) REFERENCES user(id),
+			FOREIGN KEY (category_id) REFERENCES user(id)
+		);
 	`,
 
 	"vocabs": `

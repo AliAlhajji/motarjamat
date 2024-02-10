@@ -3,6 +3,7 @@ package sqlitedb
 import (
 	"database/sql"
 	"errors"
+	"fmt"
 	"time"
 
 	"github.com/jmoiron/sqlx"
@@ -94,4 +95,29 @@ func (r *userRepo) GetUserByUUID(uuid string) (*models.User, error) {
 
 	return &user, nil
 
+}
+
+func (r *userRepo) GetAllByPage(page int) ([]*models.User, error) {
+	pageLimit := 10
+	queryLowerBound := (page - 1) * pageLimit
+	queryUpperBound := pageLimit
+
+	q := fmt.Sprintf(`SELECT * FROM user LIMIT %d,%d`, queryLowerBound, queryUpperBound)
+	var users []*models.User
+
+	err := r.db.Select(&users, q)
+	if err != nil {
+		return nil, err
+	}
+
+	return users, nil
+}
+
+func (r *userRepo) Delete(userID int64) error {
+	q := `DELETE FROM user WHERE id = $1`
+	_, err := r.db.Exec(q, userID)
+	if err != nil {
+		return err
+	}
+	return nil
 }

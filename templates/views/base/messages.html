@@ -1,0 +1,15 @@
+{{ define "messages" }}
+
+{{ if .err }}
+<div class="alert alert-danger" id="loginError" role="alert">
+    {{ .err }}
+</div>
+{{ end }}
+
+{{if .message }}
+<div class="alert alert-info" id="loginError" role="alert">
+    {{ .err }}
+</div>
+{{ end }}
+
+{{ end }}

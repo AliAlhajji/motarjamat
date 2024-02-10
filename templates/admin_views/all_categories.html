@@ -1,0 +1,100 @@
+{{ template "admin_header" .}}
+{{ template "admin_navbar" .}}
+{{ template "admin_messages" .}}
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th scope="col">عنوان القسم</th>
+            <th scope="col">التحكم</th>
+        </tr>
+    </thead>
+    <tbody>
+        {{ range .categories }}
+        <tr>
+            <td>
+                {{ .Title }}
+            </td>
+            <td>
+                <button type="button" class="btn btn-danger"
+                    onclick="showDeleteModal('{{ .ID }}', '{{ .Title }}')">حذف</button>
+                <button type="button" class="btn btn-success"
+                    onclick="showUpdateModal('{{ .ID }}', '{{ .Title }}')">تعديل</button>
+            </td>
+        </tr>
+        {{ end }}
+    </tbody>
+</table>
+
+<div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-labelledby="confirmDeleteModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="confirmDeleteModalLabel">اكتب اسم القسم كما هو لتأكيد الحذف</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <input type="text" class="form-control" id="confirmationInput" placeholder="Enter your data here">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">تراجع</button>
+                <button type="button" id="confirmButton" class="btn btn-primary">تأكيد</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="updateCategoryModal" tabindex="-1" aria-labelledby="updateCategoryModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+
+                <h5 class="modal-title" id="updateCategoryModalLabel">العنوان الجديد</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="updateForm" method="post">
+                <div class="modal-body">
+                    <input type="text" name="title" class="form-control" id="categoryTitleInput">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">تراجع</button>
+                    <button type="submit" id="confirmUpdate" class="btn btn-primary">تأكيد</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    function showDeleteModal(categoryID, categoryTitle) {
+
+
+        const modal = new bootstrap.Modal(document.getElementById("confirmDeleteModal"))
+        const confirmButton = document.getElementById("confirmButton")
+        confirmButton.onclick = (event) => {
+            const confirmCatTitle = document.getElementById('confirmationInput').value;
+
+            if (confirmCatTitle == categoryTitle) {
+                window.location = "/admin/category/delete/" + categoryID
+            } else {
+                modal.toggle();
+            }
+        }
+
+        modal.toggle();
+
+    }
+
+    function showUpdateModal(categoryID, categoryTitle) {
+        const modal = new bootstrap.Modal(document.getElementById("updateCategoryModal"))
+        const updateForm = document.getElementById("updateForm")
+        const titleInput = document.getElementById("categoryTitleInput")
+        updateForm.action = "/admin/category/update/" + categoryID
+        titleInput.value = categoryTitle
+
+        modal.toggle();
+    }
+</script>
+{{ template "admin_footer" .}}

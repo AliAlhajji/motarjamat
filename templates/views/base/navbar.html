@@ -13,6 +13,26 @@
                 <li class="nav-item">
                     <a class="nav-link active" href="/new_post">مترجمة جديدة</a>
                 </li>
+
+                {{ if eq .user.Role "admin" }}
+                <li class="nav-item">
+                    <a class="nav-link active" href="/admin">التحكم الإداري</a>
+                </li>
+                {{ end }}
+                {{ end }}
+
+                {{ if .categories }}
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+                        data-bs-toggle="dropdown" aria-expanded="false">
+                        الأقسام
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        {{ range .categories }}
+                        <li><a class="dropdown-item" href="/category/{{ .ID }}">{{ .Title }}</a></li>
+                        {{ end }}
+                    </ul>
+                </li>
                 {{ end }}
             </ul>
             {{ if .user }}

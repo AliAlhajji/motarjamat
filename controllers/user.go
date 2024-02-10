@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"net/http"
+	"strconv"
 
 	"github.com/AliAlhajji/Motarjamat/middleware"
 	"github.com/AliAlhajji/Motarjamat/models"
@@ -16,6 +17,8 @@ type UserServer interface {
 	GetUserByUsername(username string) (user *models.User, err error)
 	GetUserByID(id int64) (user *models.User, err error)
 	GetUserByUUID(uuid string) (user *models.User, err error)
+	GetAllByPage(page int) ([]*models.User, error)
+	Delete(id int64) error
 }
 
 type userController struct {
@@ -26,6 +29,29 @@ func NewUserController(repo UserServer) *userController {
 	return &userController{
 		repo: repo,
 	}
+}
+
+func (s *userController) GetAll(c *gin.Context) {
+	data := gin.H{}
+	data["title"] = "All Users"
+	data["categories"] = c.MustGet("cats")
+
+	postID := c.Param("page")
+
+	page, err := strconv.Atoi(postID)
+	if err != nil {
+		page = 1
+	}
+
+	users, err := s.repo.GetAllByPage(page)
+	if err != nil {
+		data["err"] = err
+		c.HTML(http.StatusInternalServerError, "admin_all_users.html", data)
+	}
+
+	data["users"] = users
+
+	c.HTML(http.StatusOK, "admin_all_users.html", data)
 }
 
 func (s *userController) CreateUser(c *gin.Context) {
@@ -42,7 +68,7 @@ func (s *userController) CreateUser(c *gin.Context) {
 		return
 	}
 
-	uuid := c.GetString(middleware.ContextUUID)
+	uuid := c.GetString("uuid")
 	if uuid == "" {
 		c.HTML(http.StatusBadRequest, "error.html", gin.H{"err": "Firebase uuid missing"})
 		return
@@ -96,4 +122,23 @@ func (s *userController) GetUserByUsername(c *gin.Context) {
 	}
 
 	c.HTML(200, "user.html", u)
+}
+
+func (c *userController) Delete(ctx *gin.Context) {
+	paramsUserID := ctx.Param("userID")
+
+	userID, err := strconv.Atoi(paramsUserID)
+	if err != nil {
+		ctx.HTML(http.StatusBadRequest, "error.html", gin.H{"err": err})
+	}
+
+	err = c.repo.Delete(int64(userID))
+	if err != nil {
+		users, _ := c.repo.GetAllByPage(1)
+
+		ctx.HTML(http.StatusInternalServerError, "admin_all_users.html", gin.H{"err": err, "title": "All Users", "users": users})
+		return
+	}
+
+	ctx.Redirect(http.StatusTemporaryRedirect, "/admin/users")
 }

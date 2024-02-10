@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/AliAlhajji/Motarjamat/models"
+	"github.com/AliAlhajji/Motarjamat/utils"
 	"github.com/gin-gonic/gin"
 )
 
@@ -29,6 +30,18 @@ func NewAuthMiddleware(authServer authServer, userServer userServer) *authMiddle
 	return &authMiddleware{
 		authServer: authServer,
 		userServer: userServer,
+	}
+}
+
+func (m *authMiddleware) EnsureAdmin() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		user := utils.GetContextUser(c)
+		if user == nil || user.Role != "admin" {
+			c.HTML(http.StatusUnauthorized, "error.html", gin.H{"err": "You are not authorized"})
+			c.Abort()
+		} else {
+			c.Next()
+		}
 	}
 }
 

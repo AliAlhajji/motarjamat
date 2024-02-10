@@ -1,0 +1,39 @@
+{{ template "header" .}}
+
+{{ template "navbar" .}}
+<br>
+<style>
+    .rounded-corner {
+        border-radius: 10px;
+        border: 2px solid #b9b9b9;
+        padding: 20px;
+        width: 80%;
+        text-align: start;
+    }
+
+    .post-title {
+        text-decoration: none;
+        color: rgb(63, 63, 63);
+    }
+</style>
+
+<h2>
+    قسم: {{ .category.Title }}
+</h2>
+<br><br>
+<div class="posts">
+    {{ range .posts }}
+
+    <div class="card">
+        <div class="card-header">
+            <h3>
+                <a class="post-title" href="/post/{{ .ID }}">{{ .Title }}</a>
+            </h3>
+            ترجمة: {{ .Name }}
+        </div>
+    </div>
+    <br>
+    {{ end }}
+</div>
+
+{{ template "footer" .}}

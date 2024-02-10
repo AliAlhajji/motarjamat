@@ -1,6 +1,8 @@
 package utils
 
 import (
+	"github.com/AliAlhajji/Motarjamat/models"
+	"github.com/gin-gonic/gin"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -18,4 +20,20 @@ func HashAndSaltPassword(password string) (string, error) {
 func VerifyPassword(hashedPassword string, password string) bool {
 	err := bcrypt.CompareHashAndPassword([]byte(hashedPassword), []byte(password))
 	return err == nil
+}
+
+// Return the user that is saved in the context
+func GetContextUser(ctx *gin.Context) *models.User {
+	contextUser, ok := ctx.Get("user")
+	if !ok {
+		return nil
+	}
+
+	user, ok := contextUser.(*models.User)
+	if !ok {
+		return nil
+
+	}
+
+	return user
 }

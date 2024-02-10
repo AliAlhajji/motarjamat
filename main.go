@@ -3,6 +3,8 @@ package main
 import (
 	"context"
 	"log"
+	"os"
+	"path/filepath"
 
 	"github.com/AliAlhajji/Motarjamat/controllers"
 	firebaseservice "github.com/AliAlhajji/Motarjamat/firebase_service"
@@ -16,9 +18,15 @@ func main() {
 
 	r.Static("/assets/js", "./assets/js")
 	r.Static("/assets/css", "./assets/css")
-	r.LoadHTMLGlob("./templates/*.html")
 
-	err := sqlitedb.Connect()
+	files, err := loadTemplates("templates")
+	if err != nil {
+		panic(err)
+	}
+	// r.LoadHTMLGlob("./templates/**/*")
+	r.LoadHTMLFiles(files...)
+
+	err = sqlitedb.Connect()
 	if err != nil {
 		panic(err)
 	}
@@ -29,6 +37,11 @@ func main() {
 	}
 
 	postRepo, err := sqlitedb.InitPostRepo()
+	if err != nil {
+		panic(err)
+	}
+
+	categoryRepo, err := sqlitedb.InitCategoryRepo()
 	if err != nil {
 		panic(err)
 	}
@@ -44,28 +57,65 @@ func main() {
 	}
 
 	userService := controllers.NewUserController(userRepo)
-	postControllrt := controllers.NewPostsController(postRepo)
+	postControllrt := controllers.NewPostsController(postRepo, categoryRepo)
+	categoryController := controllers.NewCategoryController(categoryRepo)
 
 	authMiddleware := middleware.NewAuthMiddleware(firebaseAuthClient, userRepo)
 
-	r.Use(authMiddleware.ExtractUserFromToken())
+	r.Use(authMiddleware.ExtractUserFromToken(), postControllrt.AddCategories())
+
+	adminRoutes := r.Group("/admin")
+	adminRoutes.Use(authMiddleware.EnsureAdmin())
+	adminRoutes.GET("/", categoryController.ShowAll)
+	adminRoutes.GET("/categories", categoryController.ShowAll)
+	adminRoutes.GET("/categories/add", categoryController.AddNew)
+	adminRoutes.POST("/categories/add", categoryController.AddNew)
+	adminRoutes.GET("/category/delete/:category", categoryController.DeleteCategory)
+	adminRoutes.POST("/category/update/:category", categoryController.UpdateCategory)
+	adminRoutes.GET("/users/:page", userService.GetAll)
+	adminRoutes.GET("/users", userService.GetAll)
+	adminRoutes.GET("/user/delete/:userID", userService.Delete)
 
 	r.GET("/register", userService.CreateUser)
 	r.POST("/register", authMiddleware.RegisterNewUser(), userService.CreateUser)
 	r.GET("/login", userService.Login)
 	r.POST("/login", userService.Login)
 	r.GET("/", postControllrt.AllPostsByPage)
-	r.GET("/home/:page", postControllrt.AllPostsByPage)
 	r.GET("/:page", postControllrt.AllPostsByPage)
 	r.GET("/new_post", authMiddleware.Authenticate(), postControllrt.NewPost)
 	r.POST("/new_post", authMiddleware.Authenticate(), postControllrt.NewPost)
-	r.Any("/post/:id", postControllrt.GetPost)
+	r.Any("/post/:post", postControllrt.GetPost)
 	r.GET("/edit_post/:id", authMiddleware.Authenticate(), postControllrt.EditPost)
 	r.POST("/edit_post/:id", authMiddleware.Authenticate(), postControllrt.EditPost)
 	r.GET("/delete_post/:id", authMiddleware.Authenticate(), postControllrt.Delete)
+	r.GET("/category/:category", postControllrt.CategoryPosts)
 
 	err = r.Run()
 	if err != nil {
 		log.Panic(err)
 	}
+}
+
+func loadTemplates(root string) (files []string, err error) {
+	err = filepath.Walk(root, func(path string, info os.FileInfo, err error) error {
+		if err != nil {
+			return err
+		}
+		fileInfo, err := os.Stat(path)
+		if err != nil {
+			return err
+		}
+		if fileInfo.IsDir() {
+			if path != root {
+				_, err = loadTemplates(path)
+				if err != nil {
+					return err
+				}
+			}
+		} else {
+			files = append(files, path)
+		}
+		return err
+	})
+	return files, err
 }

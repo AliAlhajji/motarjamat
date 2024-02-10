@@ -46,7 +46,17 @@ func (r *postRepo) CreatePost(post *models.Post) (int64, error) {
 			return 0, err
 		}
 	}
-	defer result.Close()
+
+	result.Close()
+
+	q = `INSERT INTO post_category (post_id, category_id) VALUES ($1, $2)`
+	// Add categories
+	for _, catID := range post.Categories {
+		_, err = r.db.Exec(q, id, catID)
+		if err != nil {
+			return 0, err
+		}
+	}
 
 	return id, nil
 }
@@ -77,6 +87,25 @@ func (r *postRepo) GetAllPostsPaged(page int) ([]*models.Post, error) {
 	var posts []*models.Post
 
 	err := r.db.Select(&posts, q)
+	if err != nil {
+		return nil, err
+	}
+
+	return posts, nil
+}
+
+func (r *postRepo) GetByCategory(categoryID int64, page int) ([]*models.Post, error) {
+	queryLowerBound := (page - 1) * pageLimit
+	queryUpperBound := pageLimit
+
+	q := fmt.Sprintf(`SELECT user.uuid user_id, post.id id, title, body, link, username, name 
+	FROM post 
+	INNER JOIN user ON post.user_id = user.uuid 
+	WHERE post.id IN (SELECT post_id FROM post_category WHERE post_category.category_id = $1)
+	LIMIT %d,%d`, queryLowerBound, queryUpperBound)
+	var posts []*models.Post
+
+	err := r.db.Select(&posts, q, categoryID)
 	if err != nil {
 		return nil, err
 	}
