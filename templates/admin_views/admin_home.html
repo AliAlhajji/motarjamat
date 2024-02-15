@@ -1,0 +1,41 @@
+{{ template "admin_header" .}}
+{{ template "admin_navbar" .}}
+{{ template "admin_messages" .}}
+
+<center>
+
+    <div class="col-10">
+        <form action="/admin/update_settings" method="post">
+            <div class="row mb-3">
+                <label for="title" class="col-sm-2 col-form-label">عنوان الموقع</label>
+                <div class="col-sm-10">
+                    <input type="text" name="title" class="form-control" id="title" value="{{.settings.Title}}">
+                </div>
+            </div>
+            <div class="mb-3">
+                <label for="announcement" class="form-label">الإعلان العام عند إغلاق الموقع</label>
+                <textarea class="form-control" name="announcement" id="announcement"
+                    rows="3">{{.settings.Announcement}}</textarea>
+            </div>
+            <div class="row mb-3">
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="isRunning" value="0" id="turnOff" {{ if not
+                        .settings.IsRunning }}checked{{end}}>
+                    <label class="form-check-label" for="turnOff">
+                        إطفاء الموقع
+                    </label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="isRunning" id="turnOn" value="1" {{if
+                        .settings.IsRunning }}checked{{end}}>
+                    <label class="form-check-label" for="turnOn">
+                        تشغيل الموقع
+                    </label>
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary">حفظ</button>
+        </form>
+    </div>
+
+</center>
+{{ template "admin_footer" .}}

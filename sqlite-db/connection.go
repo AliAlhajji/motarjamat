@@ -38,6 +38,14 @@ func Connect() (err error) {
 }
 
 var createTables map[string]string = map[string]string{
+	"site_settings": `
+		CREATE TABLE IF NOT EXISTS site_settings (
+			title TEXT,
+			is_running bool,
+			announcement TEXT,
+			results_per_page integer
+		);
+	`,
 	"users": `
 		CREATE TABLE IF NOT EXISTS user (
 	id INTEGER NOT NULL PRIMARY KEY,

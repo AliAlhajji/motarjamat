@@ -2,6 +2,13 @@
 {{ template "admin_navbar" .}}
 {{ template "admin_messages" .}}
 
+
+<form class="form" action="/admin/update_settings" method="post">
+    <input type="text" name="title" id="title" value="{{ .settings.Title }}">
+    <input type="checkbox" name="isRunning" id="isRunning" {{ if .settings.IsRunning }}checked{{end}}>
+    <input type="text" name="announcement" id="announcement" value="{{ .settings.Announcement }}">
+</form>
+
 <table class="table table-striped">
     <thead>
         <tr>

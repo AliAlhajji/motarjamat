@@ -127,7 +127,12 @@ func (c *postsController) AllPostsByPage(ctx *gin.Context) {
 
 	cats := ctx.MustGet("cats")
 
-	ctx.HTML(http.StatusOK, "home.html", gin.H{"title": "مترجمات", "posts": posts, "user": user, "categories": cats})
+	ctx.HTML(http.StatusOK, "home.html", gin.H{"title": "مترجمات",
+		"settings":   ctx.MustGet("siteSettings"),
+		"posts":      posts,
+		"user":       user,
+		"categories": cats,
+	})
 
 }
 

@@ -46,6 +46,8 @@ func main() {
 		panic(err)
 	}
 
+	settingsRepo, err := sqlitedb.InitSettingsRepo()
+
 	firebaseApp, err := firebaseservice.NewFirebaseApp("./firebase-sdk.json")
 	if err != nil {
 		panic(err)
@@ -59,14 +61,17 @@ func main() {
 	userService := controllers.NewUserController(userRepo)
 	postControllrt := controllers.NewPostsController(postRepo, categoryRepo)
 	categoryController := controllers.NewCategoryController(categoryRepo)
+	settingsController := controllers.NewSettingsController(settingsRepo)
 
 	authMiddleware := middleware.NewAuthMiddleware(firebaseAuthClient, userRepo)
+	settingsMiddleware := middleware.NewSettingsMiddleware(settingsRepo)
 
-	r.Use(authMiddleware.ExtractUserFromToken(), postControllrt.AddCategories())
+	r.Use(authMiddleware.ExtractUserFromToken(), settingsMiddleware.GetSettings(), postControllrt.AddCategories())
 
 	adminRoutes := r.Group("/admin")
 	adminRoutes.Use(authMiddleware.EnsureAdmin())
-	adminRoutes.GET("/", categoryController.ShowAll)
+	adminRoutes.GET("/", settingsController.AdminHome)
+	adminRoutes.POST("/update_settings", settingsController.UpdateSettings)
 	adminRoutes.GET("/categories", categoryController.ShowAll)
 	adminRoutes.GET("/categories/add", categoryController.AddNew)
 	adminRoutes.POST("/categories/add", categoryController.AddNew)

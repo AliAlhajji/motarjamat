@@ -39,6 +39,7 @@ func (c *cateogryController) ShowAll(ctx *gin.Context) {
 	}
 
 	data["categories"] = cats
+	data["settings"] = ctx.MustGet("siteSettings")
 
 	ctx.HTML(http.StatusOK, "all_categories.html", data)
 }
@@ -74,7 +75,7 @@ func (c *cateogryController) AddNew(ctx *gin.Context) {
 		return
 	}
 
-	ctx.HTML(http.StatusTemporaryRedirect, "all_categories.html", gin.H{"title": "All Categories", "msg": "Added"})
+	ctx.HTML(http.StatusTemporaryRedirect, "all_categories.html", gin.H{"title": "All Categories", "msg": "Added", "settings": ctx.MustGet("siteSettings")})
 }
 
 func (c *cateogryController) DeleteCategory(ctx *gin.Context) {
